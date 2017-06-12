@@ -22,6 +22,17 @@ enum EInformationType {
 }
 
 /**
+ * Describes error types.
+ */
+enum EErrorReason {
+    EError_None                         = 0,    /**< This error code do not using. */
+    EError_UnknownError                 = -1,   /**< Unknown error. */
+    EError_CantWriteResponse            = -2,   /**< Can't write response to temporary dir for parsers. */
+    EError_IncorrectHTTPResponseCode    = -3,   /**< Incorrect HTTP Response Code. */
+    EError_CantParse                    = -4    /**< Parser can't correct parse response */
+}
+
+/**
  * Callback calls after successful web request.
  *
  * @param iRequestID    Request ID.
@@ -29,6 +40,15 @@ enum EInformationType {
  * @param data          Custom data.
  */
 typedef WebAPIResponse = function void (int iRequestID, Handle hResponse, any data);
+
+/**
+ * Callback calls after web request with error.
+ *
+ * @param iRequestID    Request ID.
+ * @param eError        Error reason.
+ * @param data          Custom data.
+ */
+typedef WebAPIError = function void (int iRequestID, EErrorReason eError, any data);
 
 /**
  * Starts a Steam Web API call.
@@ -46,6 +66,7 @@ native void WebAPI_Cancel(int iRequestID);
 
 /**
  * Finish Steam Web API call.
+ * Remember. Created Request with WebAPI_Start() don't deletes automatically, if your callback APIWebResponse or APIWebError returns false.
  *
  * @param iRequestID    Request ID for finishing.
  * @return              True, if request started, or false.
