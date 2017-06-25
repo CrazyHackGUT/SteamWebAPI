@@ -9,7 +9,7 @@ public void OnPluginStart() {
 
     BuildPath(Path_SM, SZF(g_szRequestsDir), "data/steam_web_api/");
     if (!DirExists(g_szRequestsDir) && !CreateDirectory(g_szRequestsDir, FPERM_DEFAULT))
-        SetFailState("[Steam Web API] Can't create temporary dir: %s.Create dir manually.", g_szRequestsDir);
+        SetFailState("[Steam Web API] Can't create temporary dir: %s. Create dir manually.", g_szRequestsDir);
 
     if (!UTIL_AutoSetupAPIKey()) {
         Handle hCvar = CreateConVar("sv_webapikey", "", "Steam Web API key");
@@ -52,12 +52,21 @@ public int Event_OnSteamTransferFinished(Handle hSteamRequest, bool bFailure, bo
     }
 
     // Parse and call successful callback.
-    Handle hResponse = ResultParser_Parse(hRequest, szResponse);
+    Handle hAllOpenedHandles;
+    Handle hResponse = ResultParser_Parse(hRequest, szResponse, hAllOpenedHandles);
 
     if (!hResponse) {
         API_OnFailedRequest(hRequest, EError_CantParse);
         return;
     }
 
+    RequestFrame(Event_CleanupMemory, hAllOpenedHandles);
     API_OnSuccessRequest(hRequest, hResponse);
+}
+
+/**
+ * Cleanup.
+ */
+public void Event_CleanupMemory(Handle hAllOpenedHandles) {
+    UTIL_CloseAllHandles(hAllOpenedHandles);
 }

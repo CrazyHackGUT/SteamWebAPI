@@ -34,6 +34,8 @@ enum EErrorReason {
 
 /**
  * Callback calls after successful web request.
+ * WARNING! Response handle(-s) automatically has been closed in next tick.
+ * If you need something data from response in next ticks, save it manually in your plugin memory.
  *
  * @param iRequestID    Request ID.
  * @param hResponse     Response object (StringMap object).
@@ -120,9 +122,10 @@ native void WebAPI_ClearRequestParameters(int iRequestID);
  * Set callback.
  *
  * @param iRequestID    Request ID.
- * @param fCallback     Callback function. Set INVALID_FUNCTION if you don't need result.
+ * @param fSuccess      Callback function, if result is successful. Set INVALID_FUNCTION if you don't need result.
+ * @param fError        Callback function, if result is unsuccessful. Set INVALID_FUNCTION if you don't need know about any errors.
  */
-native void WebAPI_SetCallback(int iRequestID, WebAPIResponse fCallback = INVALID_FUNCTION);
+native void WebAPI_SetCallback(int iRequestID, WebAPIResponse fSuccess = INVALID_FUNCTION, WebAPIError fError = INVALID_FUNCTION);
 
 /**
  * Set custom data for callback.
@@ -131,6 +134,14 @@ native void WebAPI_SetCallback(int iRequestID, WebAPIResponse fCallback = INVALI
  * @param data          Any data.
  */
 native void WebAPI_SetCustomData(int iRequestID, any data);
+
+/**
+ * Set KeyValues response type.
+ *
+ * @param iRequestID    Request ID.
+ * @param bUse          Use KeyValues, or use StringMaps.
+ */
+native void WebAPI_SetUsageKeyValues(int iRequestID, bool bUse = false);
 
 /**
  * Change request owner.

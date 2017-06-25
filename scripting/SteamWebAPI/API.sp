@@ -6,6 +6,7 @@ void API_Register() {
     CreateNative("WebAPI_SetRequestParameters",     Native_SetRequestParameters);
     CreateNative("WebAPI_SetRequestParameter",      Native_SetRequestParameter);
     CreateNative("WebAPI_ChangeRequestOwner",       Native_ChangeRequestOwner);
+    CreateNative("WebAPI_SetUsageKeyValues",        Native_SetUsageKeyValues);
     CreateNative("WebAPI_CancelAllRequests",        Native_CancelAllRequests);
     CreateNative("WebAPI_SetCustomData",            Native_SetCustomData);
     CreateNative("WebAPI_SetCallback",              Native_SetCallback);
@@ -59,6 +60,10 @@ public int Native_ChangeRequestOwner(NATIVE_PARAMS) {
     int iRequestID = API_GetRequestID(1, hPlugin);
 
     Request_SetOwner(iRequestID, GetNativeCell(2));
+}
+
+public int Native_SetUsageKeyValues(NATIVE_PARAMS) {
+    Request_MarkUsingKV(API_GetRequestID(1, hPlugin), GetNativeCell(2));
 }
 
 public int Native_CancelAllRequests(NATIVE_PARAMS) {

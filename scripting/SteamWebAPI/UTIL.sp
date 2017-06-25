@@ -1,12 +1,11 @@
-static const char g_szAPI_BaseURL[] = "https://api.steampowered.com/{interface}/{method}/v{version}";
-
 bool UTIL_IsValidPluginHandle(Handle hPlugin) {
     Handle hIterator = GetPluginIterator();
     bool bValid = false;
 
-    while (MorePlugins(hIterator) && !bValid) {
+    while (MorePlugins(hIterator)) {
         if (ReadPlugin(hIterator) == hPlugin) {
             bValid = true;
+            break;
         }
     }
 
@@ -22,11 +21,15 @@ void UTIL_PrepareURL(char[] szBuffer, int iMaxLength, const char[] szInterface, 
     ReplaceString(szBuffer, iMaxLength, "{method}",     szMethod,       true);
 }
 
-Handle UTIL_ChangeHandleOwner(Handle hHandle, Handle hPlugin, bool bCloseOriginalHandle = true) {
+Handle UTIL_ChangeHandleOwner(Handle hHandle, Handle hPlugin, bool bCloseOriginalHandle = true, Handle &hOutput = null) {
     Handle hResult = CloneHandle(hHandle, hPlugin);
 
     if (bCloseOriginalHandle) {
         delete hHandle;
+    }
+
+    if (hOutput) {
+        PushArrayCell(hOutput, hResult);
     }
 
     return hResult;
@@ -34,8 +37,8 @@ Handle UTIL_ChangeHandleOwner(Handle hHandle, Handle hPlugin, bool bCloseOrigina
 
 bool UTIL_AutoSetupAPIKey() {
     if (GetEngineVersion() == Engine_CSGO) {
-        if (FindCommandLineParam("-authkey")) {
-            GetCommandLineParam("-authkey", SZF(g_szWebAPIKey), "");
+        if (FindCommandLineParam(g_szCommandLineArg_CSGO)) {
+            GetCommandLineParam(g_szCommandLineArg_CSGO, SZF(g_szWebAPIKey), "");
 
             if (g_szWebAPIKey[0])
                 return true;
@@ -52,4 +55,13 @@ bool UTIL_AutoSetupAPIKey() {
     }
 
     return false;
+}
+
+void UTIL_CloseAllHandles(Handle hArrayList) {
+    int iLength = GetArraySize(hArrayList);
+    for (int iCount = 0; iCount < iLength; iCount++) {
+        delete view_as<Handle>(GetArrayCell(hArrayList, iCount));
+    }
+
+    delete hArrayList;
 }

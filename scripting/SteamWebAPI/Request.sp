@@ -188,6 +188,15 @@ bool Request_Cancel(int iRequestID) {
     return true;
 }
 
+bool Request_MarkUsingKV(int iRequestID, bool bUsing) {
+    Handle hRequest = Request_FindRequestByID(iRequestID);
+    if (!hRequest)
+        return false;
+
+    SetTrieValue(hRequest, "receive_kv", bUsing);
+    return true;
+}
+
 bool Request_ReadyToStart(int iRequestID) {
     Handle hRequest = Request_FindRequestByID(iRequestID);
     if (!hRequest)

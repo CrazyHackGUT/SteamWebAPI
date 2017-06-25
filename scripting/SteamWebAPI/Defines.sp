@@ -1,9 +1,4 @@
-/**
- * Steam Web API
- *               Defines.sp
- *
- * Version: 0.1 alpha
- */
+// Generic plugin information
 #define PLUGIN_DESCRIPTION  "Provides API for Steam Web API calls"
 #define PLUGIN_VERSION      "0.1 alpha"
 #define PLUGIN_AUTHOR       "CrazyHackGUT aka Kruzya"
@@ -21,3 +16,7 @@
 
 // Other stuff
 #define NATIVE_PARAMS       Handle hPlugin, int iNumParams
+
+// Static vars
+stock const char g_szAPI_BaseURL[]          = "https://api.steampowered.com/{interface}/{method}/v{version}";
+stock const char g_szCommandLineArg_CSGO[]  = "-authkey";
